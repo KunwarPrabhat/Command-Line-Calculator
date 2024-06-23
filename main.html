@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+        <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+        <div class="container">
+                <div class="Calculator">
+                        <form>
+                                <div>
+                                        <input id="display_toggle" class="display" type="text" name="display" readonly>
+                                </div>
+                                <div class="first_line">
+                                        <input class="first_line_button" type="button" value="">
+                                        <input class="first_line_button2" type="button" value="">
+
+                                </div>
+                                <div class="second_line">
+                                        <input class="second_line_button" type="button" value="π"
+                                                onclick="appear('π');">
+                                        <input class="second_line_button" type="button" value="e"
+                                                onclick="appear('e');">
+                                        <input class="second_line_button" type="button" value="&lpar;"
+                                                onclick="appear('(');">
+                                        <input class="second_line_button" type="button" value="&rpar;"
+                                                onclick="appear(')');">
+                                        <input class="second_line_button" type="button" value="log"
+                                                onclick="appear('log(');">
+                                </div>
+                                <div>
+                                        <input class="AC_class" type="button" value="√" onclick="appear('√');">
+                                        <input class="AC_class" type="button" value="x!" onclick="appear('!');">
+                                        <input class="AC_class" type="button" value="AC" onclick="allClear();">
+                                        <input class="fourth_coloumn_button" type="button" value="C"
+                                                onclick="backspace();">
+                                        <input class="fifth_coloumn_button" type="button" value="/"
+                                                onclick="operators('/')">
+                                </div>
+                                <div>
+                                        <input class="nums" type="button" value="7" onclick="appear('7');">
+                                        <input class="nums" type="button" value="8" onclick="appear('8');">
+                                        <input class="nums" type="button" value="9" onclick="appear('9');">
+                                        <input class="fourth_coloumn_button" type="button" value="-"
+                                                onclick="appear('-');">
+                                        <input class="fifth_coloumn_button" type="button" value="%"
+                                                onclick="operators('%');">
+                                </div>
+                                <div>
+                                        <input class="nums" type="button" value="4" onclick="appear('4');">
+                                        <input class="nums" type="button" value="5" onclick="appear('5');">
+                                        <input class="nums" type="button" value="6" onclick="appear('6');">
+                                        <input class="fourth_coloumn_button" type="button" value="x"
+                                                onclick="operators('*');">
+                                        <input class="fifth_coloumn_button" type="button" value="x^"
+                                                onclick="operators('^');">
+                                </div>
+                                <div>
+                                        <input class="nums" type="button" value="1" onclick="appear('1');">
+                                        <input class="nums" type="button" value="2" onclick="appear('2');">
+                                        <input class="nums" type="button" value="3" onclick="appear('3');">
+                                        <input class="fourth_coloumn_button" type="button" value="+"
+                                                onclick="appear('+')">
+                                        <input id="power_button" class="fifth_coloumn_button" type="button" value="OFF"
+                                                onclick="togglePower()">
+                                </div>
+                                <div>
+                                        <input class="nums" type="button" value="00" onclick="appear('00');">
+                                        <input class="nums" type="button" value="0" onclick="appear('0');">
+                                        <input class="nums" type="button" value="." onclick="appear('.');">
+                                        <input class="long_button" type="button" value="="
+                                                onclick="Evaluate_Arithematic_operation(display.value)">
+
+                                </div>
+                        </form>
+                </div>
+        </div>
+        <audio id="button-sound" src="click.mp3" preload="auto"></audio>
+        <audio id="long_button_sound" src="yes.mp3" preload="auto"></audio>
+        <!--THIS IS THE JAVA SCRIPT CODE -->
+        <script>
+                function playSound() {
+                        var sound = new Audio("click.mp3");
+                        sound.play();
+                }
+                function playSolvedSound() {
+                        var sound = new Audio("yes.mp3");
+                        sound.play();
+                }
+                //global scope 
+                let calculatorOn = false;
+                const display = document.getElementById('display_toggle');
+                const powerButton = document.getElementById('power_button');
+
+                function togglePower() {
+                        calculatorOn = !calculatorOn;
+                        if (calculatorOn) {
+                                powerButton.classList.add('glowing');
+                                display.removeAttribute("readonly");
+                                display.value = '';
+                                powerButton.value = 'ON';
+                        }
+                        else {
+                                powerButton.classList.remove('glowing');
+                                display.setAttribute('readonly', '');
+                                display.value = '';
+                                powerButton.value = 'OFF';
+                        }
+                        playSound();
+                }
+                function appear(value) {
+                        if (calculatorOn) {
+
+                                const currentValue = display.value;
+                                const operators = ['+', '-', '*', '/', '(', ')'];
+                                if (value === '.') {
+                                        const segments = currentValue.split(/[\+\-\*\/\(\)]/);
+                                        const lastSegment = segments[segments.length - 1];
+                                        if (lastSegment.includes('.')) {
+                                                return;
+                                        }
+                                }
+                                display.value += value;
+                                display.scrollLeft = display.scrollWidth;
+                                playSound();
+                        }
+                }
+                function operators(value) {
+                        if (calculatorOn && display.value !== '') {
+                                display.value += value
+                                display.scrollLeft = display.scrollWidth;
+                                playSound();
+                        }
+                }
+                function backspace() {
+                        if (calculatorOn) {
+                                display.value = display.value.toString().slice(0, -1);
+                                playSound();
+                        }
+                }
+                function allClear() {
+                        if (calculatorOn) {
+                                display.value = '';
+                                playSound();
+                        }
+                }
+                function SquareRoot(value) {
+                        let userInput = value;
+
+                        var result = Math.sqrt(userInput);
+                        console.log("sqrt of", value,"is", result);
+
+                        if (userInput === '0') {
+                                display.value = result.toString();
+                        } else if (userInput < '0') {
+                                display.value = 'Cannot find sqrt of negative numbers';
+                        }
+                        return result;
+                }
+                function powerFunction(inputs) {
+                        console.log("Has entered the power function with tokens - ", inputs, "of length", inputs.length);
+                        let base;
+                        let exponent;
+                        for (let i = 0; i < inputs.length; i++) {
+                                if (inputs[i] == '^') {
+                                        exponent = parseFloat(inputs[i + 1]);
+                                        console.log("exponent = ", exponent);
+                                        base = parseFloat(inputs[i - 1]);
+                                        console.log("base = ", base);
+                                        break;
+                                }
+                        }
+                        let result = Math.pow(base, exponent);
+                        console.log("The result for ", base, "^", exponent, "is ", result);
+                        return result;
+
+                }
+                function factorial(value) {
+                        console.log("display value before operating factorial", display.value);
+                        console.log("the value is - ", value);
+                        if (value == 0) {
+                                display.value = "1";
+                        } else if (value < 0) {
+                                return undefined;
+                                console.log("shows less than zero");
+                        } else {
+                                var number = 1;
+                                for (var i = 2; i <= value; i++) {
+                                        number *= i;
+                                }
+                                var result = number;
+                        }
+                        console.log("The factorial of", value, "is", result);
+                        console.log("current display value is ", display.value);
+                        return result;
+                }
+                function percentage(value) {
+                        let num = parseFloat(value / 100);
+                        let result = num;
+                        return result;
+                }
+                //------------------- SHUNTING-YARD ALGORITHM FOR ARITHEMATIC OPERATIONS -------------------------------
+                function Evaluate_Arithematic_operation(expression) {
+                        if (calculatorOn) {
+                                playSolvedSound();
+
+                                console.log("Arithematic expression - ", expression);
+
+                                let tokens = tokenize(expression);
+
+                                console.log("After Tokenization - ", tokens);
+
+                                let postfix = shuntingYard(tokens);
+
+                                let result = evaluatePostfix(postfix);
+
+                                display.value = result;
+                        }
+                }
+                function customStartsWith(str, searchString, position = 0) {
+                        return str.indexOf(searchString, position) === position;
+                }
+                function tokenize(expression) {
+                        const tokens = [];
+
+                        let regular_expression = /[+\-*/%^()!√]|log\(|π|e|\d+\.\d+|\d+/g;
+                        const matches = expression.match(regular_expression); //returns an array of matched strings.
+                        console.log("In tokenization processs MATCHES = ", matches);
+
+                        // to handle the expression that has + or - at the start ------------------------------------------
+                        if (customStartsWith(expression, '-')) {
+                                tokens.push('-1');
+                                tokens.push('*');
+                                expression = expression.slice(1);
+                        } else if (customStartsWith(expression, '+')) {
+                                tokens.push('+1');
+                                tokens.push('*');
+                                expression = expression.slice(1);
+                        }
+                        if (matches) {
+                                tokens.push(...matches);
+// to handlle the - and + sign coming just after the parenthesis.
+                                for (let i = 0; i < tokens.length; i++) {
+                                        if (tokens[i] === '(' && tokens[i + 1] === '-') {
+                                                tokens.splice(i + 1, 1, '-1', '*');
+                                                i += 1; 
+                                        } else if (tokens[i] === '(' && tokens[i + 1] === '+') {
+                                                tokens.splice(i + 1, 1, '+1', '*');
+                                                i += 1;
+                                        }
+                                }
+
+                        }
+                        console.log("Tokens are - ", tokens);
+                        return tokens;
+                }
+                function calculateLog(value) {
+                        let result;
+                        if (!isNaN(value) && value > 0) {
+                                result = Math.log10(value);
+                        } else {
+                                display.value = "Please enter a positive number for log function.";
+                        }
+                        return result;
+                }
+                function shuntingYard(tokens) { //this function is getting the output stack as return the Reverse Polish notation.
+                        let precedence = {
+                                '!': 4,
+                                '√': 3.5,
+                                'log(': 3.5,
+                                '^': 3,
+                                '*': 2,
+                                '/': 2,
+                                '%': 2,
+                                '+': 1,
+                                '-': 1,
+                                '(': 0,
+                        };
+
+                        let operators = [];
+                        let output = [];
+
+                        tokens.forEach(token => {
+                                if (!isNaN(token) || token === 'π' || token === 'e') {
+                                        output.push(token);
+                                } else if (token == '(') {
+                                        operators.push(token);
+                                } else if (token == ')') {
+                                        while (operators.length && operators[operators.length - 1] !== '(') {
+                                                output.push(operators.pop());
+                                        }
+                                        operators.pop();
+                                } else {
+                                        while (operators.length && precedence[operators[operators.length - 1]] >= precedence[token]) {
+                                                output.push(operators.pop());
+                                        }
+                                        operators.push(token);
+                                }
+                        });
+                        while (operators.length) {
+                                output.push(operators.pop());
+                        }
+                        return output;
+                }
+                function evaluatePostfix(postfix) { // not this will solve the postfix notation or RPN.
+                        console.log("Postfix expression - ", postfix);
+                        let stack = [];
+                        postfix.forEach(token => {
+                                if (!isNaN(token)) {
+                                        let number = parseFloat(token);
+                                        console.log("Pushing number to stack:", number); // Debug statement
+                                        stack.push(number);
+                                        console.log("STACK - ", stack);
+                                        // stack.push(parseFloat(token));
+                                } else if (token == '%') {
+                                        let number = stack.pop();
+                                        let percentageResult = percentage(number);
+                                        stack.push(percentageResult);
+                                } else if (token == '^') {
+                                        console.log("display value before operating power ; ", display.value);
+                                        let number1 = stack.pop();
+                                        let number2 = stack.pop();
+                                        console.log("popped elements", number1, number2);
+                                        console.log("current stack - ", stack);
+                                        console.log("diaplay value for operating power ", display.value);
+                                        let tokens = tokenize(display.value);
+                                        console.log("tokens are ", tokens);
+                                        let powerResult = powerFunction(tokens);
+                                        stack.push(powerResult);
+                                        console.log("current stack - ", stack);
+                                } else if (token == 'log(') {
+                                        let number = stack.pop();
+                                        console.log("popped element - ", number);
+                                        let logResult = calculateLog(number);
+                                        console.log("Log result is ", logResult);
+                                        stack.push(logResult);
+                                        console.log("stack after pushing", stack);
+                                } else if (token == 'π') {
+                                        let number = Math.PI;
+                                        console.log("Value of pi ", number);
+                                        stack.push(number);
+                                } else if (token == 'e') {
+                                        let number = Math.E;
+                                        console.log("The value of e is ", number);
+                                        stack.push(number);
+                                } else if (token == '√') {
+                                        let number = stack.pop();
+                                        console.log("popped element - ", number);
+                                        let SquareRootResult = SquareRoot(number);
+                                        stack.push(SquareRootResult);
+                                        console.log("pushed element - ", SquareRootResult);
+                                        console.log("STACK - ", stack);
+                                } else if (token == '!') {
+
+                                        console.log("factorial found");
+
+                                        let number = stack.pop();
+                                        console.log("number is - ", number);
+
+                                        let factorialResult = factorial(number);
+
+                                        console.log("factorial is ", factorialResult);
+
+                                        stack.push(factorialResult);
+                                        // stack.push(factorial(number));
+                                } else {
+                                        let b = stack.pop();
+                                        let a = stack.pop();
+
+                                        switch (token) {
+                                                case '+': stack.push(a + b);
+                                                        console.log("adding", a, "+", b);
+                                                        break;
+                                                case '-': stack.push(a - b);
+                                                        console.log("sub", a, "-", b);
+                                                        break;
+                                                case '*': stack.push(a * b);
+                                                        console.log("product", a, "*", b);
+                                                        break;
+                                                case '/': stack.push(a / b);
+                                                        console.log("division", a, "/", b);
+                                                        break;
+                                        }
+
+                                }
+                        });
+                        return stack[0];
+                }
+
+        </script>
+</body>
+
+</html>
